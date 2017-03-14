@@ -1,7 +1,7 @@
 version: "3"
 services:
 
-  db:
+  mysqldb:
     image: mysql:8.0
     environment:
       - MYSQL_ROOT_PASSWORD=root
@@ -64,6 +64,25 @@ services:
       - 9000:9000
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - frontend  
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  redis:
+    image: redis
+    ports:
+        - "6379:6379"  
+    networks:
+      - backend
+
+  mongodb:  
+    image: mongo:3.4
+    ports:
+      - "27017:27017"  
+    networks:
+      - backend
 
 networks:
   frontend:
