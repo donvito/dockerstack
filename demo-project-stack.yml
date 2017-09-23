@@ -1,0 +1,66 @@
+version: "3"
+services:
+
+  elasticsearch:
+    image: 'elasticsearch:5'
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+
+  kibana:
+    image: 'kibana:5'
+    ports:
+      - "5601:5601"
+    networks:
+      - backend
+    depends_on:
+      - elasticsearch    
+    deploy:
+      replicas: 1
+  
+  portainer:
+    image: portainer/portainer
+    ports:
+      - 9000:9000
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - frontend  
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  ms1:
+    image: melvindave/spring-boot-example
+    ports: 
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on: 
+      - mongodb
+    deploy:
+      replicas: 1
+
+  mongodb:
+    image: mongo
+    ports: 
+      - "27017:27017"
+    volumes:
+      - "/data/db"
+    networks:
+      - backend  
+    deploy:
+      replicas: 1    
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+   dbdata:
+   mongodata:
+   
