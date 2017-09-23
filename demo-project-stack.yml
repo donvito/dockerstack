@@ -1,8 +1,8 @@
-version: "3"
+version: "3.1"
 services:
 
   elasticsearch:
-    image: 'elasticsearch:5'
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:5.6.1'
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -10,9 +10,11 @@ services:
       - backend
     deploy:
       replicas: 1
+    environment:
+      - xpack.security.enabled=false      
 
   kibana:
-    image: 'kibana:5'
+    image: 'melvindave/kibana:5.6.1'
     ports:
       - "5601:5601"
     networks:
@@ -20,7 +22,7 @@ services:
     depends_on:
       - elasticsearch    
     deploy:
-      replicas: 1
+      replicas: 1    
   
   portainer:
     image: portainer/portainer
@@ -28,6 +30,7 @@ services:
       - 9000:9000
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "portainerdata:/data"
     networks:
       - frontend  
     deploy:
@@ -50,7 +53,7 @@ services:
     ports: 
       - "27017:27017"
     volumes:
-      - "/data/db"
+      - "mongodata:/data/db"
     networks:
       - backend  
     deploy:
@@ -61,6 +64,6 @@ networks:
   backend:
 
 volumes:
-   dbdata:
    mongodata:
+   portainerdata:
    
