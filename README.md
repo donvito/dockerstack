@@ -2,4 +2,4 @@
 Docker Stack yaml scripts
 
 #Usage
-docker stack deploy -c sample-docker-stack.yml mydockerstack
+docker stack deploy -c stack.yml mystack
