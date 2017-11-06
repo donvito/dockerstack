@@ -1,0 +1,31 @@
+version: "3.3"
+services:
+
+  ms1:
+    image: melvindave/spring-boot-example
+    ports: 
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on: 
+      - mongodb
+    deploy:
+      replicas: 1
+
+  mongodb:
+    image: mongo
+    ports: 
+      - "27017:27017"
+    volumes:
+      - "mongodata:/data/db"
+    networks:
+      - backend  
+    deploy:
+      replicas: 1    
+
+networks:
+  backend:
+
+volumes:
+   mongodata:
+   
