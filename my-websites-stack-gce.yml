@@ -1,0 +1,30 @@
+version: "3.3"
+services:
+
+  nginx-service:
+    image: nginx
+    ports: 
+      - "80:80"
+    networks:
+      - web
+    deploy:
+      replicas: 1  
+    volumes:
+      - /home/melvin/docker/volumes/nginx-vol:/etc/nginx  
+    depends_on:
+      - ghost-service
+
+  ghost-service:
+    image: ghost
+    networks:
+      - web
+    deploy:
+      replicas: 1  
+    volumes:
+      - ghost-vol:/var/lib/ghost/content
+
+networks:
+  web:
+
+volumes:
+  ghost-vol:

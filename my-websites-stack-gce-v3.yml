@@ -1,0 +1,40 @@
+version: "3.3"
+services:
+  ghost-service:
+    image: ghost
+    networks:
+      - web
+    volumes:
+      - ghost-vol:/var/lib/ghost/content
+    deploy:
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.port=2368"
+        - "traefik.docker.network=mywebsite_web"
+        - "traefik.frontend.rule=Host:www.melvinvivas.com"
+
+  traefik:
+    image: traefik
+    command: --web \
+      --docker \
+      --docker.swarmmode \
+      --docker.watch \
+      --logLevel=DEBUG
+    networks:
+      - web
+    ports:
+      - "80:80"
+      - "8081:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+    deploy:
+      placement:
+        constraints: [node.role==manager]
+
+networks:
+  web:
+
+volumes:
+  ghost-vol:

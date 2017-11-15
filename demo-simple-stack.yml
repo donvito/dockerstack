@@ -1,30 +1,5 @@
 version: "3.3"
 services:
-
-  elasticsearch:
-    image: 'docker.elastic.co/elasticsearch/elasticsearch:5.6.1'
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - elasticdata:/usr/share/elasticsearch/data 
-    networks:
-      - backend
-    deploy:
-      replicas: 1
-    environment:
-      - xpack.security.enabled=false      
-
-  kibana:
-    image: 'melvindave/kibana:5.6.1'
-    ports:
-      - "5601:5601"
-    networks:
-      - backend
-    depends_on:
-      - elasticsearch    
-    deploy:
-      replicas: 1    
   
   portainer:
     image: portainer/portainer
@@ -34,10 +9,15 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "portainerdata:/data"
     networks:
-      - frontend  
+      - backend  
     deploy:
       placement:
         constraints: [node.role == manager]
+    labels:
+        - "traefik.backend=portainer"
+        - "traefik.frontend.rule=Host:portainer.docker.localhost"
+        - "traefik.enable=true"
+        - "traefik.port=9000"
 
   ms1:
     image: melvindave/spring-boot-example
@@ -49,6 +29,11 @@ services:
       - mongodb
     deploy:
       replicas: 1
+    labels:
+        - "traefik.backend=ms1"
+        - "traefik.frontend.rule=Host:ms1.docker.localhost"
+        - "traefik.enable=true"
+        - "traefik.port=8080"
 
   mongodb:
     image: mongo
@@ -61,6 +46,15 @@ services:
     deploy:
       replicas: 1    
 
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    networks:
+      - frontend      
+    deploy:
+      replicas: 1  
+
 networks:
   frontend:
   backend:
@@ -68,5 +62,3 @@ networks:
 volumes:
    mongodata:
    portainerdata:
-   elasticdata:
-   
