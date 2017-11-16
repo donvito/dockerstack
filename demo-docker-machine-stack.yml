@@ -1,0 +1,75 @@
+version: "3.3"
+services:
+  
+  portainer:
+    image: portainer/portainer
+    ports:
+      - 9000:9000
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "portainerdata:/data"
+    networks:
+      - frontend  
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  ms1:
+    image: melvindave/spring-boot-example
+    ports: 
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on: 
+      - mongodb
+    deploy:
+      replicas: 5
+
+  mongodb:
+    image: mongo
+    ports: 
+      - "27017:27017"
+    volumes:
+      - "mongodata:/data/db"
+    networks:
+      - backend  
+    deploy:
+      replicas: 1 
+
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    networks:
+      - frontend      
+    deploy:
+      replicas: 1 
+
+  traefik:
+    image: traefik
+    command: --web \
+      --docker \
+      --docker.swarmmode \
+      --docker.watch \
+      --logLevel=DEBUG
+    networks:
+      - backend
+    ports:
+      - "80:80"
+      - "8081:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+    deploy:
+      placement:
+        constraints: [node.role==manager]            
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+   mongodata:
+   portainerdata:
+   nginxdata:
+   
