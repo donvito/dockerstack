@@ -39,7 +39,7 @@ services:
   nginx:
     image: nginx
     ports:
-      - "8081:80"
+      - "8082:80"
     networks:
       - frontend      
     deploy:
