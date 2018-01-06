@@ -1,0 +1,24 @@
+version: "3.3"
+services:
+
+  ms1:
+    image: melvindave/spring-boot-example
+    ports: 
+      - "8080:8080"
+    networks:
+      - backend
+    deploy:
+      replicas: 3
+
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    networks:
+      - frontend      
+    deploy:
+      replicas: 1 
+
+networks:
+  backend:   
+  frontend:
