@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   ghost-melvinvivas-com:
-    image: ghost
+    image: 'ghost:2.25'
     networks:
       - web
     volumes:
@@ -15,7 +15,7 @@ services:
         - "traefik.frontend.rule=Host:www.melvinvivas.com"
 
   ghost-melvindave-com:
-    image: ghost
+    image: 'ghost:2.25'
     networks:
       - web
     volumes:
